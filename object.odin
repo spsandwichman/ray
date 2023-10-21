@@ -1,4 +1,4 @@
-package raymarcher
+package rayman
 
 import "core:math/linalg"
 import m "core:math"

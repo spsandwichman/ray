@@ -1,4 +1,4 @@
-package raymarcher
+package rayman
 
 import rl "vendor:raylib"
 import "core:fmt"
@@ -69,7 +69,7 @@ render :: proc(scene: ^scene) {
             
             // has hit
             if dist <= scene.camera.min_dist {
-                scene.camera.buf[x + y*WIDTH] = {250, 90, 90} - {
+                scene.camera.buf[x + y*WIDTH] = {90, 90, 250} - {
                     min(u8(iter), 90),
                     min(u8(iter), 90),
                     min(u8(iter), 90),
