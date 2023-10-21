@@ -48,15 +48,9 @@ render :: proc(scene: ^scene) {
             ray := scene.camera.pos
 
 
-            if scene_SDF(scene, ray) <= scene.camera.min_dist {
-                scene.camera.buf[x + y*WIDTH] = {
-                    u8(scene_SDF(scene, ray) * 1000),
-                    u8(scene_SDF(scene, ray) * 1000),
-                    u8(scene_SDF(scene, ray) * 1000),
-                }
-            } else {
-                scene.camera.buf[x + y*WIDTH] = {0,0,0}
-            }
+            
+            scene.camera.buf[x + y*WIDTH] = {0,0,0}
+            
 
             iter := 0
             for scene_SDF(scene, ray) > scene.camera.min_dist && 
@@ -72,11 +66,11 @@ render :: proc(scene: ^scene) {
             
             // has hit
             if scene_SDF(scene, ray) <= scene.camera.min_dist {
-                scene.camera.buf[x + y*WIDTH] = {255,255,255} - {
+                scene.camera.buf[x + y*WIDTH] = {90, 90, 255} - {
                     u8(iter),
                     u8(iter),
                     u8(iter),
-                } * 4
+                }
             } else { // has not hit
                 scene.camera.buf[x + y*WIDTH] = {
                     u8(iter),
@@ -84,6 +78,14 @@ render :: proc(scene: ^scene) {
                     u8(iter),
                 } * 2
             }
+            // c := clamp(f64(iter)/20, 0, 1)
+            // scene.camera.buf[x + y*WIDTH] = {
+            //     cast(u8)(c*256),
+            //     cast(u8)(c*256),
+            //     cast(u8)(c*256),
+            // }
+
+            // fmt.println(iter, c)
 
             
             
