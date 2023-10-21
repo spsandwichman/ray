@@ -5,6 +5,8 @@ import m "core:math"
 import "vendor:raylib"
 import "core:fmt"
 
+MB_ITERATIONS :: 20
+
 vec3 :: [3]f64
 
 color :: [3]u8 // RGB8
@@ -111,14 +113,13 @@ create_mandelbulb :: proc() -> (obj: object) {
 }
 
 mandelbulb_SDF :: proc(ray: vec3, data: rawptr) -> f64 {
-    iterations :: 20
     power :: 4
 
     z := ray
     dr : f64 = 1
     r : f64 = 0
 
-    for i in 0..<iterations {
+    for i in 0..<MB_ITERATIONS {
         r = vlen(z)
         if r > 4 do break
 

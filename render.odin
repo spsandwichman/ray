@@ -53,38 +53,55 @@ render :: proc(scene: ^scene) {
             
 
             iter := 0
-            for scene_SDF(scene, ray) > scene.camera.min_dist && 
-                scene_SDF(scene, ray) < scene.camera.max_dist &&
+
+            dist := scene_SDF(scene, ray)
+            for dist > scene.camera.min_dist && 
+                dist < scene.camera.max_dist &&
                 iter < scene.camera.max_march {
                 
                 // march
-                ray += v_march * scene_SDF(scene, ray)
+                ray += v_march * dist
+                dist = scene_SDF(scene, ray)
                 iter += 1   
             }
             // fmt.println(iter)
 
             
             // has hit
-            if scene_SDF(scene, ray) <= scene.camera.min_dist {
-                scene.camera.buf[x + y*WIDTH] = {90, 90, 255} - {
-                    u8(iter),
-                    u8(iter),
-                    u8(iter),
+            if dist <= scene.camera.min_dist {
+                scene.camera.buf[x + y*WIDTH] = {250, 90, 90} - {
+                    min(u8(iter), 90),
+                    min(u8(iter), 90),
+                    min(u8(iter), 90),
                 }
             } else { // has not hit
                 scene.camera.buf[x + y*WIDTH] = {
                     u8(iter),
                     u8(iter),
                     u8(iter),
-                } * 2
+                }
             }
-            // c := clamp(f64(iter)/20, 0, 1)
+            if iter >= scene.camera.max_march {
+                scene.camera.buf[x + y*WIDTH] = {0, 0, 0}
+            }
+            // c := clamp(f64(iter)/MB_ITERATIONS, 0, 1)
             // scene.camera.buf[x + y*WIDTH] = {
             //     cast(u8)(c*256),
             //     cast(u8)(c*256),
             //     cast(u8)(c*256),
             // }
 
+            // if iter >= scene.camera.max_march || dist >= scene.camera.max_dist {
+            //     scene.camera.buf[x + y*WIDTH] = {0, 0, 0}
+            // } else {
+            //     d := linalg.distance(ray, scene.camera.pos)
+            //     scene.camera.buf[x + y*WIDTH] = {
+            //         u8(d*70),
+            //         u8(d*70),
+            //         u8(d*70),
+            //     }
+            // }
+            
             // fmt.println(iter, c)
 
             

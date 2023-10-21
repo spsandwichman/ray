@@ -3,7 +3,9 @@ package raymarcher
 import "core:fmt"
 import rl "vendor:raylib"
 
+// WIDTH, HEIGHT :: 1600, 900
 WIDTH, HEIGHT :: 800, 450
+// WIDTH, HEIGHT :: 200, 100
 
 main :: proc() {
 
@@ -14,11 +16,11 @@ main :: proc() {
 
     // init camera
     cam : camera
-    cam.pos, cam.rot = {0,0,3}, {0,0,0}
-    cam.fov = 90
-    cam.max_march = 256
-    cam.min_dist = 0.001
-    cam.max_dist = 100000
+    cam.pos, cam.rot = {0,0,2.5}, {0,0,0}
+    cam.fov = 70
+    cam.max_march = 200
+    cam.min_dist = 0.0001
+    cam.max_dist = 100
 
     // init screen buffer
     cam.buf = new([WIDTH*HEIGHT]color)
@@ -53,7 +55,7 @@ main :: proc() {
 
         render(&scene)
 
-        // cam.rot.x += 0.1
+        cam.rot.z += 0.1
 
         rl.UpdateTexture(screen_texture, cam.buf)
 
