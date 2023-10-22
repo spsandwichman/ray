@@ -79,7 +79,6 @@ float scene_SDF(vec3 ray) {
     const float repeat_scale = 1;
     ray = sin(ray/repeat_scale)*repeat_scale;
 
-
     float power = cos(total_time/3.23)+4;
 
     vec3 z = ray;
@@ -120,6 +119,7 @@ vec3 normal(vec3 ray, float epsilon) {
 }
 
 void main() {
+
     // Normalized pixel coordinates (from 0 to 1)
     vec2 pixel = fragTexCoord * resolution;
 
@@ -164,21 +164,6 @@ void main() {
         float(iter)/float(c_max_march)
     );
 
-    // if (dist <= c_min_dist) {
-    //     finalColor = vec4(col, 1.);
-    // }
-
     float cond = step(dist, c_min_dist);
     finalColor = vec4(col * cond, 1.) + vec4(1.) * (1-cond);
-
-    // if (dist <= c_min_dist) {
-    //     vec3 normal = normal(ray, 0.0001);
-    //     vec3 light = vec3(cos(total_time),sin(total_time),0);
-    //     float brightness = max(0, dot(normal, light)) * 1;
-    //     finalColor = vec4(vec3(brightness),1.);
-    // }
-
-    // finalColor = vec4(fract(fragTexCoord*cos(total_time)*10), 0, 1);
 }
-
-
