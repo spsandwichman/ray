@@ -4,9 +4,9 @@ import "core:fmt"
 import m "core:math"
 import rl "vendor:raylib"
 
-// WIDTH, HEIGHT :: 1600, 900
+WIDTH, HEIGHT :: 1600, 900
 // WIDTH, HEIGHT :: 1920, 1080
-WIDTH, HEIGHT :: 800, 450
+// WIDTH, HEIGHT :: 1000, 500
 
 main :: proc() {
 

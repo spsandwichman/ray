@@ -59,6 +59,23 @@ float scene_SDF(vec3 ray) {
     );
     float box = vmax(abs(ray-box_pos)-vec3(0.2));
 
+    vec3 ico_pos = vec3(
+        cos(total_time),
+        cos(total_time+2*PI/3),
+        -cos(total_time+4*PI/3)
+    );
+    float ico;
+    {
+        float g = sqrt(5.)*.5+.5;
+        vec3 n = normalize(vec3(1,g,0));
+        float d = 0;
+        vec3 p = abs(ray-ico_pos);
+        d = max(d, dot(p,n));
+        d = max(d, dot(p,n.yzx));
+        d = max(d, dot(p,n.zxy));
+        ico = d-0.2;
+    }
+
     const float repeat_scale = 1;
     ray = sin(ray/repeat_scale)*repeat_scale;
 
@@ -90,7 +107,7 @@ float scene_SDF(vec3 ray) {
     }
     float mandel = 0.5 * log(r)*r/dr;
 
-    return min(min(mandel, sphere), box);
+    return min(min(mandel, sphere), min(box, ico));
 }
 
 vec3 normal(vec3 ray, float epsilon) {
