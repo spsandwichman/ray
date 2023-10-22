@@ -4,8 +4,8 @@ import "core:fmt"
 import m "core:math"
 import rl "vendor:raylib"
 
-WIDTH, HEIGHT :: 1920, 1080
-// WIDTH, HEIGHT :: 800, 450
+// WIDTH, HEIGHT :: 1920, 1080
+WIDTH, HEIGHT :: 800, 450
 
 main :: proc() {
 
@@ -16,7 +16,7 @@ main :: proc() {
 
     // init camera
     cam : camera
-    cam.pos, cam.rot = {0, 0, 5}, {0,0,0}
+    cam.pos, cam.rot = {0, 1, 5}, {m.to_radians_f32(20.0),0,m.to_radians_f32(60.0)}
     cam.fov = m.to_radians_f32(70.0)
     cam.max_march = 256
     cam.min_dist = 0.0005
@@ -98,10 +98,10 @@ main :: proc() {
         free_all(context.temp_allocator)
 
         // scene.camera.rot.z += 0.001
-        scene.camera.pos.x = m.sin(total_time/2)*3
-        scene.camera.pos.z = m.cos(total_time/2)*3
+        scene.camera.pos.x = m.sin(total_time/2)*2.0
+        scene.camera.pos.z = m.cos(total_time/2)*2.0
         scene.camera.rot.y = -total_time/2
-        if cam.min_dist >= 0.00003 {
+        if cam.min_dist >= 0.0005 {
             cam.min_dist = 1/m.pow(total_time, 4)
         }
         

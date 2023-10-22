@@ -41,7 +41,9 @@ void rotate_camera(out vec3 target, out vec3 local_x, out vec3 local_y) {
 
 float scene_SDF(vec3 ray) {
 
-    // ray = sin(ray/2)*2;
+    const float repeat_scale = 1;
+
+    ray = sin(ray/repeat_scale)*repeat_scale;
 
     // float sphere1 = length(ray-vec3(1.3,0.7,0))-0.2;
     // float sphere2 = length(ray-vec3(sin(total_time),sin(total_time+2*PI/3),sin(total_time+4*PI/3)))-1.2;
@@ -128,11 +130,15 @@ void main() {
 
     vec3 col = mix(
         vec3(0),
-        abs(normal(ray, c_min_dist))*2,
+        abs(normal(ray, c_min_dist))*1.3,
         float(iter)/float(c_max_march)
     );
 
-    finalColor = vec4(col, 1.);
+    // if (dist <= c_min_dist) {
+    //     finalColor = vec4(col, 1.);
+    // }
+
+    finalColor = vec4(col * step(dist, c_min_dist), 1.);
     // if (dist <= c_min_dist) {
     //     vec3 normal = normal(ray, 0.0001);
     //     vec3 light = vec3(cos(total_time),sin(total_time),0);
