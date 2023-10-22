@@ -4,6 +4,7 @@ import "core:fmt"
 import m "core:math"
 import rl "vendor:raylib"
 
+// WIDTH, HEIGHT :: 1600, 900
 // WIDTH, HEIGHT :: 1920, 1080
 WIDTH, HEIGHT :: 800, 450
 
@@ -18,7 +19,7 @@ main :: proc() {
     cam : camera
     cam.pos, cam.rot = {0, 1, 5}, {m.to_radians_f32(20.0),0,m.to_radians_f32(60.0)}
     cam.fov = m.to_radians_f32(70.0)
-    cam.max_march = 256
+    cam.max_march = 500
     cam.min_dist = 0.0005
     cam.max_dist = 100
 

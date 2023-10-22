@@ -39,16 +39,29 @@ void rotate_camera(out vec3 target, out vec3 local_x, out vec3 local_y) {
     local_y = rot * vec3(0., 1., 0.);
 }
 
+float vmax(vec3 v) {
+    return max(max(v.x, v.y), v.z);
+}
+
 float scene_SDF(vec3 ray) {
 
-    const float repeat_scale = 1;
+    vec3 sphere_pos = vec3(
+        sin(total_time),
+        sin(total_time+2*PI/3),
+        sin(total_time+4*PI/3)
+    );
+    float sphere = length(ray-sphere_pos)-0.2;
 
+    vec3 box_pos = vec3(
+        -cos(total_time),
+        cos(total_time+2*PI/3),
+        cos(total_time+4*PI/3)
+    );
+    float box = vmax(abs(ray-box_pos)-vec3(0.2));
+
+    const float repeat_scale = 1;
     ray = sin(ray/repeat_scale)*repeat_scale;
 
-    // float sphere1 = length(ray-vec3(1.3,0.7,0))-0.2;
-    // float sphere2 = length(ray-vec3(sin(total_time),sin(total_time+2*PI/3),sin(total_time+4*PI/3)))-1.2;
-
-    // return sphere2;
 
     float power = cos(total_time/3.23)+4;
 
@@ -77,7 +90,7 @@ float scene_SDF(vec3 ray) {
     }
     float mandel = 0.5 * log(r)*r/dr;
 
-    return mandel;
+    return min(min(mandel, sphere), box);
 }
 
 vec3 normal(vec3 ray, float epsilon) {
@@ -138,7 +151,8 @@ void main() {
     //     finalColor = vec4(col, 1.);
     // }
 
-    finalColor = vec4(col * step(dist, c_min_dist), 1.) + vec4(1.) * (1-step(dist, c_min_dist));
+    float cond = step(dist, c_min_dist);
+    finalColor = vec4(col * cond, 1.) + vec4(1.) * (1-cond);
 
     // if (dist <= c_min_dist) {
     //     vec3 normal = normal(ray, 0.0001);
