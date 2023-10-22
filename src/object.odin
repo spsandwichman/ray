@@ -7,11 +7,11 @@ import "core:fmt"
 
 MB_ITERATIONS :: 20
 
-vec3 :: [3]f64
+vec3 :: [3]f32
 
 color :: [3]u8 // RGB8
 
-vmax :: proc(v: vec3) -> f64 {
+vmax :: proc(v: vec3) -> f32 {
     return max(v.x, v.y, v.z)
 }
 
@@ -26,11 +26,10 @@ camera :: struct {
     // t = [0,0,-1], cx = [1,0,0], cy = [0,1,0]
 
     pos, rot : vec3,
-    buf : ^[WIDTH*HEIGHT]color,    // [x][y]
     max_march : int,          // max march count
-    max_dist  : f64,          // max distance to stop marching at
-    min_dist  : f64,          // min distance to stop marching at
-    fov : f64,          // horizontal field of veiw, in degrees
+    max_dist  : f32,          // max distance to stop marching at
+    min_dist  : f32,          // min distance to stop marching at
+    fov : f32,          // horizontal field of veiw, in degrees
 }
 
 scene :: struct {
@@ -43,9 +42,9 @@ object :: struct {
     data : rawptr,
 }
 
-SDF :: proc(_: vec3, _: rawptr) -> f64
+SDF :: proc(_: vec3, _: rawptr) -> f32
 
-scene_SDF :: proc(scene: ^scene, v: vec3) -> (dist: f64) {
+scene_SDF :: proc(scene: ^scene, v: vec3) -> (dist: f32) {
     dist = 0h7ff00000_00000000
     for o in scene.objects {
         dist = min(dist, o.sdf(v, o.data))
@@ -57,10 +56,10 @@ scene_SDF :: proc(scene: ^scene, v: vec3) -> (dist: f64) {
 
 sphere_data :: struct {
     pos : vec3,
-    radius : f64
+    radius : f32
 }
 
-create_sphere :: proc(pos : vec3, radius: f64) -> (obj: object) {
+create_sphere :: proc(pos : vec3, radius: f32) -> (obj: object) {
 
     obj.sdf = sphere_SDF
 
@@ -72,7 +71,7 @@ create_sphere :: proc(pos : vec3, radius: f64) -> (obj: object) {
     return
 }
 
-sphere_SDF :: proc(ray: vec3, data: rawptr) -> f64 {
+sphere_SDF :: proc(ray: vec3, data: rawptr) -> f32 {
     
     sphere := transmute(^sphere_data) data
 
@@ -98,7 +97,7 @@ create_box :: proc(pos : vec3, size: vec3) -> (obj: object) {
     return
 }
 
-box_SDF :: proc(ray: vec3, data: rawptr) -> f64 {
+box_SDF :: proc(ray: vec3, data: rawptr) -> f32 {
     
     box := transmute(^box_data) data
 
@@ -112,12 +111,12 @@ create_mandelbulb :: proc() -> (obj: object) {
     return
 }
 
-mandelbulb_SDF :: proc(ray: vec3, data: rawptr) -> f64 {
+mandelbulb_SDF :: proc(ray: vec3, data: rawptr) -> f32 {
     power :: 4
 
     z := ray
-    dr : f64 = 1
-    r : f64 = 0
+    dr : f32 = 1
+    r : f32 = 0
 
     for i in 0..<MB_ITERATIONS {
         r = vlen(z)
@@ -132,8 +131,6 @@ mandelbulb_SDF :: proc(ray: vec3, data: rawptr) -> f64 {
         zr := m.pow(r, power)
         theta = theta*power
         phi = phi*power
-
-
 
         z = zr * vec3{
             m.sin(theta)*m.cos(phi), 

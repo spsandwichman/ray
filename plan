@@ -1,0 +1,5 @@
+                         compile                          render
+scene tree + rendering ----------> glsl fragment shader ---------> image
+       |                                    ^
+       |                                    |
+       \---------------------------> free parameters
