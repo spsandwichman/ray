@@ -4,7 +4,7 @@ import "core:fmt"
 import m "core:math"
 import rl "vendor:raylib"
 
-WIDTH, HEIGHT :: 1600, 900
+WIDTH, HEIGHT :: 1920, 1080
 // WIDTH, HEIGHT :: 800, 450
 
 main :: proc() {
@@ -101,7 +101,7 @@ main :: proc() {
         scene.camera.pos.x = m.sin(total_time/2)*3
         scene.camera.pos.z = m.cos(total_time/2)*3
         scene.camera.rot.y = -total_time/2
-        if cam.min_dist >= 0.0003 {
+        if cam.min_dist >= 0.00003 {
             cam.min_dist = 1/m.pow(total_time, 4)
         }
         

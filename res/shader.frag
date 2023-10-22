@@ -128,7 +128,7 @@ void main() {
 
     vec3 col = mix(
         vec3(0),
-        normal(ray, c_min_dist)*2,
+        abs(normal(ray, c_min_dist))*2,
         float(iter)/float(c_max_march)
     );
 
