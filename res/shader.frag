@@ -138,7 +138,8 @@ void main() {
     //     finalColor = vec4(col, 1.);
     // }
 
-    finalColor = vec4(col * step(dist, c_min_dist), 1.);
+    finalColor = vec4(col * step(dist, c_min_dist), 1.) + vec4(1.) * (1-step(dist, c_min_dist));
+
     // if (dist <= c_min_dist) {
     //     vec3 normal = normal(ray, 0.0001);
     //     vec3 light = vec3(cos(total_time),sin(total_time),0);
