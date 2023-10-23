@@ -18,26 +18,23 @@ uniform int   c_max_march;
 int MB_ITERATIONS = 20;
 const float PI = 3.14159265358979;
 
-void rotate_camera(out vec3 target, out vec3 local_x, out vec3 local_y) {
-    
-    mat3 rot = mat3(
-        1.,       0.,            0.,
-        0.,  cos(c_rot.x), sin(c_rot.x),
-        0., -sin(c_rot.x), cos(c_rot.x)
-    ) * mat3(
-         cos(c_rot.y), 0., sin(c_rot.y),
-             0.,       1.,     0.,
-        -sin(c_rot.y), 0., cos(c_rot.y)
-    ) * mat3(
-         cos(c_rot.z), sin(c_rot.z), 0.,
-        -sin(c_rot.z), cos(c_rot.z), 0.,
-              0.,           0.,      1.
-    );
+mat3 rot = mat3(
+    1.,       0.,            0.,
+    0.,  cos(c_rot.x), sin(c_rot.x),
+    0., -sin(c_rot.x), cos(c_rot.x)
+) * mat3(
+     cos(c_rot.y), 0., sin(c_rot.y),
+         0.,       1.,     0.,
+    -sin(c_rot.y), 0., cos(c_rot.y)
+) * mat3(
+     cos(c_rot.z), sin(c_rot.z), 0.,
+    -sin(c_rot.z), cos(c_rot.z), 0.,
+          0.,           0.,      1.
+);
 
-    target  = rot * vec3(0., 0., -1.);
-    local_x = rot * vec3(1., 0., 0.);
-    local_y = rot * vec3(0., 1., 0.);
-}
+vec3 target  = rot * vec3(0., 0., -1.);
+vec3 local_x = rot * vec3(1., 0., 0.);
+vec3 local_y = rot * vec3(0., 1., 0.);
 
 float vmax(vec3 v) {
     return max(max(v.x, v.y), v.z);
@@ -128,9 +125,6 @@ void main() {
 
     float x_step = viewport_width  / (resolution.x - 1);
     float y_step = viewport_height / (resolution.y - 1);
-
-    vec3 target, local_x, local_y;
-    rotate_camera(target, local_x, local_y);
 
     vec3 v_march = normalize(
         (x_step * (pixel.x - resolution.x/2.) * local_x) +

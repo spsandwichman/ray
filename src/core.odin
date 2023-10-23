@@ -5,8 +5,8 @@ import m "core:math"
 import rl "vendor:raylib"
 
 // WIDTH, HEIGHT :: 1600, 900
-// WIDTH, HEIGHT :: 1920, 1080
-WIDTH, HEIGHT :: 1280, 720
+WIDTH, HEIGHT :: 1920, 1080
+// WIDTH, HEIGHT :: 1280, 720
 
 main :: proc() {
 
@@ -27,6 +27,7 @@ main :: proc() {
     scene : scene
     scene.camera = &cam
     scene.objects = make([dynamic]object)
+    defer delete(scene.objects)
     // append(&scene.objects, create_mandelbulb())
     // append(&scene.objects, create_sphere({0, 0, -3}, 1))
     // append(&scene.objects, create_sphere({-1, -1, -5}, 1))
@@ -34,6 +35,7 @@ main :: proc() {
 
     // load shader
     shader := rl.LoadShader(nil, "res/shader.frag") // load default vertex shader
+    defer rl.UnloadShader(shader)
     
     // link uniforms
     shader_loc_resolution := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "resolution")
@@ -53,11 +55,12 @@ main :: proc() {
 
     // target render texture
     target := rl.LoadRenderTexture(WIDTH, HEIGHT)
+    defer rl.UnloadRenderTexture(target)
 
     for !rl.WindowShouldClose() {
 
         // pass data to shader
-        total_time := cast(f32) rl.GetTime()/10 + 1.5
+        total_time := cast(f32) rl.GetTime()/4 + 1.5
         delta_time := cast(f32) rl.GetFrameTime()
 
         rl.SetShaderValue(shader, shader_loc_total_time, &total_time, .FLOAT)
@@ -102,7 +105,7 @@ main :: proc() {
         scene.camera.pos.x = m.sin(total_time)*2.0
         scene.camera.pos.z = m.cos(total_time)*2.0
         scene.camera.rot.y = -total_time
-        if cam.min_dist >= 0.001 {
+        if cam.min_dist >= 0.0001 {
             cam.min_dist = 1/m.pow(total_time, 5)
         }
         
