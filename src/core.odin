@@ -5,8 +5,8 @@ import m "core:math"
 import rl "vendor:raylib"
 
 // WIDTH, HEIGHT :: 1600, 900
-WIDTH, HEIGHT :: 1920, 1080
-// WIDTH, HEIGHT :: 1280, 720
+// WIDTH, HEIGHT :: 1920, 1080
+WIDTH, HEIGHT :: 1280, 720
 
 main :: proc() {
 
@@ -34,7 +34,7 @@ main :: proc() {
     // append(&scene.objects, create_box({1, 1, -5}, {0.5, 3, 0.5}))
 
     // load shader
-    shader := rl.LoadShader(nil, "res/shader.frag") // load default vertex shader
+    shader := rl.LoadShader(nil, "res/shader.glsl") // load default vertex shader
     defer rl.UnloadShader(shader)
     
     // link uniforms
@@ -84,8 +84,6 @@ main :: proc() {
                 rl.DrawTextureEx(target.texture, {0,0}, 0, 1, rl.WHITE)
             rl.EndShaderMode()
 
-
-
             rl.DrawText(fmt.ctprintf("%v fps", rl.GetFPS()), 0, 0, 10, rl.WHITE)
             target, loc_x, loc_y := rotate_cam(&cam)
             rl.DrawText(fmt.ctprintf("pos %v rot %v", cam.pos, cam.rot), 0, 13, 10, rl.WHITE)
@@ -105,7 +103,7 @@ main :: proc() {
         scene.camera.pos.x = m.sin(total_time)*2.0
         scene.camera.pos.z = m.cos(total_time)*2.0
         scene.camera.rot.y = -total_time
-        if cam.min_dist >= 0.0001 {
+        if cam.min_dist >= 0.001 {
             cam.min_dist = 1/m.pow(total_time, 5)
         }
         
