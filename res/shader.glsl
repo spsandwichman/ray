@@ -47,14 +47,14 @@ float scene_SDF(vec3 ray) {
         sin(total_time+2*PI/3),
         sin(total_time+4*PI/3)
     );
-    float sphere = length(ray-sphere_pos)-0.2;
+    float sphere = length(ray-sphere_pos)-0.20;
 
     vec3 box_pos = vec3(
         -cos(total_time),
         cos(total_time+2*PI/3),
         cos(total_time+4*PI/3)
     );
-    float box = vmax(abs(ray-box_pos)-vec3(0.2));
+    float box = vmax(abs(ray-box_pos)-vec3(0.20));
 
     vec3 ico_pos = vec3(
         cos(total_time),
@@ -74,7 +74,7 @@ float scene_SDF(vec3 ray) {
     }
 
     const float repeat_scale = 1;
-    ray = sin(ray/repeat_scale)*repeat_scale;
+    //ray = sin(ray/repeat_scale)*repeat_scale;
 
     float power = cos(total_time/3.23)+4;
 
@@ -103,7 +103,8 @@ float scene_SDF(vec3 ray) {
     }
     float mandel = 0.5 * log(r)*r/dr;
 
-    return min(min(mandel, sphere), min(box, ico));
+    return mandel;
+    //return min(min(mandel, sphere), min(box, ico));
 }
 
 vec3 normal(vec3 ray, float epsilon) {
@@ -116,8 +117,7 @@ vec3 normal(vec3 ray, float epsilon) {
 }
 
 void main() {
-
-    // Normalized pixel coordinates (from 0 to 1)
+    
     vec2 pixel = fragTexCoord * resolution;
 
     float viewport_width = tan(c_fov/2)*2;
@@ -137,11 +137,12 @@ void main() {
     int iter = 0;
     float dist = scene_SDF(ray);
 
+    // try to change this to a for loop
     while (dist > c_min_dist &&
           dist < c_max_dist &&
           iter < c_max_march) {
         
-        ray += v_march * dist;
+        ray += v_march * dist * 1;
         dist = scene_SDF(ray);
         iter += 1;
     }
@@ -149,15 +150,15 @@ void main() {
     vec3 range = mix(
         vec3(58, 134, 255)/255.,
         vec3(255, 0, 110)/255.,
-        float(iter)/float(c_max_march)*1.8
+        float(iter)*6/float(c_max_march)
     );
 
     vec3 col = mix(
         vec3(0),
-        abs(normal(ray, c_min_dist))*1.3,
+        abs(normal(ray, c_min_dist))*4,
         float(iter)/float(c_max_march)
     );
 
     float cond = step(dist, c_min_dist);
-    finalColor = vec4(col * cond, 1.) + vec4(1.) * (1-cond);
+    finalColor = vec4(col, 1); // + vec4(0.) * (1-cond);
 }

@@ -1,4 +1,4 @@
-package rayman
+package raylab
 
 import rl "vendor:raylib"
 import "core:fmt"

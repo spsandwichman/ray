@@ -1,4 +1,4 @@
-package rayman
+package raylab
 
 import "core:math/linalg"
 import m "core:math"

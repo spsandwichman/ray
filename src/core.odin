@@ -1,24 +1,24 @@
-package rayman
+package raylab
 
 import "core:fmt"
 import m "core:math"
 import rl "vendor:raylib"
 
-// WIDTH, HEIGHT :: 1600, 900
+WIDTH, HEIGHT :: 1600, 900
 // WIDTH, HEIGHT :: 1920, 1080
-WIDTH, HEIGHT :: 1280, 720
+// WIDTH, HEIGHT :: 1000, 500
 
 main :: proc() {
 
     // raylib init
-    rl.InitWindow(WIDTH, HEIGHT, "rayman")
+    rl.InitWindow(WIDTH, HEIGHT, "raylab")
     defer rl.CloseWindow()
     // rl.SetTargetFPS(20)
 
     // init camera
     cam : camera
-    cam.pos, cam.rot = {0, 1, 5}, {m.to_radians_f32(20.0),0,m.to_radians_f32(60.0)}
-    cam.fov = m.to_radians_f32(70.0)
+    cam.pos, cam.rot = {0, 0, 7}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
+    cam.fov = m.to_radians_f32(65.0)
     cam.max_march = 500
     cam.min_dist = 0.01
     cam.max_dist = 100
@@ -60,7 +60,7 @@ main :: proc() {
     for !rl.WindowShouldClose() {
 
         // pass data to shader
-        total_time := cast(f32) rl.GetTime()/4 + 1.5
+        total_time := cast(f32) rl.GetTime()/5 + 1.5
         delta_time := cast(f32) rl.GetFrameTime()
 
         rl.SetShaderValue(shader, shader_loc_total_time, &total_time, .FLOAT)
@@ -68,13 +68,13 @@ main :: proc() {
 
         rl.SetShaderValue(shader, shader_loc_c_pos,       &scene.camera.pos,       .VEC3)
         rl.SetShaderValue(shader, shader_loc_c_rot,       &scene.camera.rot,       .VEC3)
-        rl.SetShaderValue(shader, shader_loc_c_fov,       &scene.camera.fov,     .FLOAT)
+        rl.SetShaderValue(shader, shader_loc_c_fov,       &scene.camera.fov,       .FLOAT)
         rl.SetShaderValue(shader, shader_loc_c_max_dist,  &scene.camera.max_dist,  .FLOAT)
         rl.SetShaderValue(shader, shader_loc_c_min_dist,  &scene.camera.min_dist,  .FLOAT)
         rl.SetShaderValue(shader, shader_loc_c_max_march, &scene.camera.max_march, .INT)
 
         rl.BeginTextureMode(target)
-            rl.ClearBackground(rl.MAGENTA) // magenta is the fallback color! displays if the shader did NOT COMPILE
+            rl.ClearBackground(rl.MAGENTA) // magenta is the fallback color if the shader did NOT COMPILE
             rl.DrawRectangle(0, 0, WIDTH, HEIGHT, rl.MAGENTA)
         rl.EndTextureMode()
 
@@ -100,11 +100,11 @@ main :: proc() {
         free_all(context.temp_allocator)
 
         // scene.camera.rot.z += 0.001
-        scene.camera.pos.x = m.sin(total_time)*2.0
-        scene.camera.pos.z = m.cos(total_time)*2.0
+        scene.camera.pos.x = m.sin(total_time)*3.0
+        scene.camera.pos.z = m.cos(total_time)*3.0
         scene.camera.rot.y = -total_time
-        if cam.min_dist >= 0.001 {
-            cam.min_dist = 1/m.pow(total_time, 5)
+        if scene.camera.min_dist >= 0.0009 {
+            scene.camera.min_dist = 1/m.pow(total_time, 5)
         }
         
         // scene.camera.rot.x = -total_time/5
