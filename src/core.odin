@@ -10,6 +10,9 @@ WIDTH, HEIGHT :: 1600, 900
 
 main :: proc() {
 
+    // make raylib shut the fuck up
+    rl.SetTraceLogLevel(.WARNING)
+
     // raylib init
     rl.InitWindow(WIDTH, HEIGHT, "raylab")
     defer rl.CloseWindow()
@@ -17,10 +20,10 @@ main :: proc() {
 
     // init camera
     cam : raylab_camera
-    cam.pos, cam.rot = {0, 0, 7}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
+    cam.pos, cam.rot = {0, 0, 2}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
     cam.fov = m.to_radians_f32(65.0)
     cam.max_march = 500
-    cam.min_dist = 0.01
+    cam.min_dist = 0.0003
     cam.max_dist = 100
 
     // init scene
@@ -28,16 +31,16 @@ main :: proc() {
     scene.camera = &cam
 
     // load shader
-    shader := rl.LoadShader("res/vert.glsl", "res/frag.glsl") // load default vertex shader
+    shader := rl.LoadShader("res/default_vertex.glsl", "res/default_fragment.glsl") // load default vertex shader
     defer rl.UnloadShader(shader)
     
     // link uniforms
-    shader_loc_resolution := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "resolution")
+    shader_loc_resolution := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_resolution")
     vec2_resolution := [2]f32{f32(WIDTH), f32(HEIGHT)}
     rl.SetShaderValue(shader, shader_loc_resolution, &vec2_resolution, .VEC2)
     
-    shader_loc_total_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "total_time")
-    shader_loc_delta_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "delta_time")
+    shader_loc_total_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_total_time")
+    shader_loc_delta_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_delta_time")
 
     shader_loc_c_pos       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_pos")
     shader_loc_c_rot       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_rot")
@@ -83,24 +86,10 @@ main :: proc() {
             rl.DrawText(fmt.ctprintf("min_dist %.6f", scene.camera.min_dist), 0, 13*1, 10, rl.WHITE)
             rl.DrawText(fmt.ctprintf("t %v", total_time), 0, 13*2, 10, rl.WHITE)
             rl.DrawText(fmt.ctprintf("dt %v", delta_time), 0, 13*3, 10, rl.WHITE)
-
-
         }
         rl.EndDrawing()
 
         free_all(context.temp_allocator)
-
-        // scene.camera.rot.z += 0.001
-        scene.camera.pos.x = m.sin(total_time)*3.0
-        scene.camera.pos.z = m.cos(total_time)*3.0
-        scene.camera.rot.y = -total_time
-        if scene.camera.min_dist >= 0.0003 {
-            scene.camera.min_dist = 1/m.pow(total_time, 5)
-        }
-        
-        // scene.camera.rot.x = -total_time/5
-        // scene.camera.rot.z = total_time/3
-
     }
 
 }
