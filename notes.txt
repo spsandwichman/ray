@@ -1,0 +1,9 @@
+parameters:
+    parameters are any kind of data member owned by the scene or object.
+    a parameter can either be a constant value or an expression based on other parameters/constants.
+        parameters are calculated every frame, so no need to worry about expressions not being updated.
+        no cyclic dependencies are not allowed. no 'x = y; y = x;' nonsense.
+        this is so parameters can be evaulated one-by-one in the compiled shader.
+    
+    a scene parameter can only reference other scene parameters, it does not have access to object params.
+    an object parameter can only reference scene parameters and params from the same object.

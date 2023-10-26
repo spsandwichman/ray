@@ -16,7 +16,7 @@ main :: proc() {
     // rl.SetTargetFPS(20)
 
     // init camera
-    cam : camera
+    cam : raylab_camera
     cam.pos, cam.rot = {0, 0, 7}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
     cam.fov = m.to_radians_f32(65.0)
     cam.max_march = 500
@@ -24,17 +24,11 @@ main :: proc() {
     cam.max_dist = 100
 
     // init scene
-    scene : scene
+    scene : raylab_scene
     scene.camera = &cam
-    scene.objects = make([dynamic]object)
-    defer delete(scene.objects)
-    // append(&scene.objects, create_mandelbulb())
-    // append(&scene.objects, create_sphere({0, 0, -3}, 1))
-    // append(&scene.objects, create_sphere({-1, -1, -5}, 1))
-    // append(&scene.objects, create_box({1, 1, -5}, {0.5, 3, 0.5}))
 
     // load shader
-    shader := rl.LoadShader(nil, "res/shader.glsl") // load default vertex shader
+    shader := rl.LoadShader("res/vert.glsl", "res/frag.glsl") // load default vertex shader
     defer rl.UnloadShader(shader)
     
     // link uniforms
@@ -66,6 +60,7 @@ main :: proc() {
         rl.SetShaderValue(shader, shader_loc_total_time, &total_time, .FLOAT)
         rl.SetShaderValue(shader, shader_loc_delta_time, &delta_time, .FLOAT)
 
+
         rl.SetShaderValue(shader, shader_loc_c_pos,       &scene.camera.pos,       .VEC3)
         rl.SetShaderValue(shader, shader_loc_c_rot,       &scene.camera.rot,       .VEC3)
         rl.SetShaderValue(shader, shader_loc_c_fov,       &scene.camera.fov,       .FLOAT)
@@ -85,13 +80,9 @@ main :: proc() {
             rl.EndShaderMode()
 
             rl.DrawText(fmt.ctprintf("%v fps", rl.GetFPS()), 0, 0, 10, rl.WHITE)
-            target, loc_x, loc_y := rotate_cam(&cam)
-            rl.DrawText(fmt.ctprintf("pos %v rot %v", cam.pos, cam.rot), 0, 13, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("target %v", target), 0, 26, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("local x %v, local y %v", loc_x, loc_y), 0, 39, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("min_dist %.6f", scene.camera.min_dist), 0, 39+13, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("t %v", total_time), 0, 39+13*2, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("dt %v", delta_time), 0, 39+13*3, 10, rl.WHITE)
+            rl.DrawText(fmt.ctprintf("min_dist %.6f", scene.camera.min_dist), 0, 13*1, 10, rl.WHITE)
+            rl.DrawText(fmt.ctprintf("t %v", total_time), 0, 13*2, 10, rl.WHITE)
+            rl.DrawText(fmt.ctprintf("dt %v", delta_time), 0, 13*3, 10, rl.WHITE)
 
 
         }
@@ -103,7 +94,7 @@ main :: proc() {
         scene.camera.pos.x = m.sin(total_time)*3.0
         scene.camera.pos.z = m.cos(total_time)*3.0
         scene.camera.rot.y = -total_time
-        if scene.camera.min_dist >= 0.0009 {
+        if scene.camera.min_dist >= 0.0003 {
             scene.camera.min_dist = 1/m.pow(total_time, 5)
         }
         
