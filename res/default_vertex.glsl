@@ -9,22 +9,21 @@ in vec4 vertexColor;
 
 // Input uniform values
 uniform mat4 mvp;
-uniform vec3  c_pos;
-uniform vec3  c_rot;
+uniform vec3 raylab_cam_pos;
+uniform vec3 raylab_cam_rot;
 
-// Output vertex attributes (to fragment shader)
 out vec2 tex_coord;
 
-out vec3 target;
-out vec3 local_x;
-out vec3 local_y;
-
-// NOTE: Add here your custom variables
+out vec3 raylab_cam_target;
+out vec3 raylab_cam_local_x;
+out vec3 raylab_cam_local_y;
 
 void main()
 {
     // Send vertex attributes to fragment shader
     tex_coord = vertexTexCoord;
+
+    vec3 c_rot = raylab_cam_rot;
 
     mat3 rot = mat3(
         1.,       0.,            0.,
@@ -40,9 +39,9 @@ void main()
             0.,           0.,      1.
     );
 
-    target  = rot * vec3(0., 0., -1.);
-    local_x = rot * vec3(1., 0., 0.);
-    local_y = rot * vec3(0., 1., 0.);
+    raylab_cam_target  = rot * vec3(0., 0., -1.);
+    raylab_cam_local_x = rot * vec3(1., 0., 0.);
+    raylab_cam_local_y = rot * vec3(0., 1., 0.);
 
     // Calculate final vertex position
     gl_Position = mvp*vec4(vertexPosition, 1.0);

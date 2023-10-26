@@ -23,7 +23,7 @@ raylab_camera :: struct {
 
 raylab_object :: struct {
     name : string,
-    SDF : string, // raw GLSL code
+    SDF : string, // raw GLSL code - should NOT have a method header or ANYTHING of the sort
     params : [dynamic]raylab_param,
 }
 
@@ -49,7 +49,7 @@ raylab_param_type :: enum {
     // t_mat4x2, t_mat4x3, t_mat4x4,
 }
 
-raylab_param_type_str :: [raylab_param_type]string {
+raylab_param_type_str := [raylab_param_type]string {
     .t_bool     = "bool",
     .t_int      = "int",
     .t_uint     = "uint",

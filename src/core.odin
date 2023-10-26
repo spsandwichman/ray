@@ -39,15 +39,15 @@ main :: proc() {
     vec2_resolution := [2]f32{f32(WIDTH), f32(HEIGHT)}
     rl.SetShaderValue(shader, shader_loc_resolution, &vec2_resolution, .VEC2)
     
-    shader_loc_total_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_total_time")
-    shader_loc_delta_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_delta_time")
+    shader_loc_time       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_time")
+    shader_loc_frame_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_frame_time")
 
-    shader_loc_c_pos       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_pos")
-    shader_loc_c_rot       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_rot")
-    shader_loc_c_max_march := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_max_march")
-    shader_loc_c_max_dist  := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_max_dist")
-    shader_loc_c_min_dist  := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_min_dist")
-    shader_loc_c_fov       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "c_fov")
+    shader_loc_c_pos       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_pos")
+    shader_loc_c_rot       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_rot")
+    shader_loc_c_max_march := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_max_march")
+    shader_loc_c_max_dist  := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_max_dist")
+    shader_loc_c_min_dist  := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_min_dist")
+    shader_loc_c_fov       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_fov")
 
 
     // target render texture
@@ -60,8 +60,8 @@ main :: proc() {
         total_time := cast(f32) rl.GetTime()/5 + 1.5
         delta_time := cast(f32) rl.GetFrameTime()
 
-        rl.SetShaderValue(shader, shader_loc_total_time, &total_time, .FLOAT)
-        rl.SetShaderValue(shader, shader_loc_delta_time, &delta_time, .FLOAT)
+        rl.SetShaderValue(shader, shader_loc_time, &total_time, .FLOAT)
+        rl.SetShaderValue(shader, shader_loc_frame_time, &delta_time, .FLOAT)
 
 
         rl.SetShaderValue(shader, shader_loc_c_pos,       &scene.camera.pos,       .VEC3)
