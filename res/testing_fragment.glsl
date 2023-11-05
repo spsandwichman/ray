@@ -6,9 +6,7 @@ in vec3 raylab_cam_target;
 in vec3 raylab_cam_local_x;
 in vec3 raylab_cam_local_y;
 
-out vec4 finalColor;
-
-uniform vec2 resolution;
+uniform vec2 raylab_resolution;
 uniform float raylab_total_time; // elapsed seconds since raylib initWindow()
 uniform float raylab_delta_time; // elapsed seconds since last frame drawn
 
@@ -21,6 +19,7 @@ uniform int   raylab_cam_max_march;
 
 int MB_ITERATIONS = 20;
 const float PI = 3.14159265358979;
+float total_time = raylab_total_time/3;
 
 
 float vmax(vec3 v) {
@@ -63,7 +62,7 @@ float scene_SDF(vec3 ray) {
     const float repeat_scale = 1;
     //ray = sin(ray/repeat_scale)*repeat_scale;
 
-    float power = cos(total_time/1.23)+4;
+    float power = cos(raylab_total_time/7)+4;
 
     vec3 z = ray;
     float dr = 1;
@@ -92,6 +91,7 @@ float scene_SDF(vec3 ray) {
 
     // return mandel;
     return min(min(mandel, sphere), min(box, ico));
+    // return min(sphere, min(box,ico));
 }
 
 vec3 normal(vec3 ray, float epsilon) {
@@ -146,6 +146,6 @@ void main() {
         float(iter)*6/float(raylab_cam_max_march)
     );
 
-    float cond = step(dist, 0.000001);
-    finalColor = vec4(col, 1); // + vec4(0.) * (1-cond);
+    float cond = step(dist, raylab_cam_min_dist);
+    gl_FragColor = vec4(col, 1) * cond + vec4(vec3(0), 1) * (1-cond);
 }

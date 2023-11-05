@@ -6,3 +6,13 @@ parameters:
         this is so params can be evaulated one-by-one in the compiled shader. 
     a scene param can only reference other scene params, it does not have access to object params.
     an object param can only reference scene params and params from the same object.
+
+determine param evaluation order: (assuming no cyclic dependencies)
+    put all params into a list (arbitrary position)
+    use a sorting algorithm (i like selection sort) with:
+        if a param depends on the param it is compared with, reorder
+        so that the dependent param is evaluated after the independent.
+        (sorting in ascending order, dependent param > independent param)
+
+        probably going to use a sort that does well on already sorted lists since 
+        you usually won't have huge networks of dependencies. (smoothsort??)

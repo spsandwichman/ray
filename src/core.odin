@@ -19,19 +19,19 @@ main :: proc() {
     // rl.SetTargetFPS(20)
 
     // init camera
-    cam : raylab_camera
-    cam.pos, cam.rot = {0, 0, 2}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
+    cam : camera
+    cam.pos, cam.rot = {0, 0, 3.5}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
     cam.fov = m.to_radians_f32(65.0)
     cam.max_march = 500
     cam.min_dist = 0.0003
-    cam.max_dist = 100
+    cam.max_dist = 7
 
     // init scene
-    scene : raylab_scene
+    scene : scene
     scene.camera = &cam
 
     // load shader
-    shader := rl.LoadShader("res/default_vertex.glsl", "res/default_fragment.glsl") // load default vertex shader
+    shader := rl.LoadShader("res/default_vertex.glsl", "res/testing_fragment.glsl") // load default vertex shader
     defer rl.UnloadShader(shader)
     
     // link uniforms
@@ -39,7 +39,7 @@ main :: proc() {
     vec2_resolution := [2]f32{f32(WIDTH), f32(HEIGHT)}
     rl.SetShaderValue(shader, shader_loc_resolution, &vec2_resolution, .VEC2)
     
-    shader_loc_time       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_time")
+    shader_loc_time       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_total_time")
     shader_loc_frame_time := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_frame_time")
 
     shader_loc_c_pos       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_pos")
@@ -49,7 +49,6 @@ main :: proc() {
     shader_loc_c_min_dist  := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_min_dist")
     shader_loc_c_fov       := transmute(rl.ShaderLocationIndex) rl.GetShaderLocation(shader, "raylab_cam_fov")
 
-
     // target render texture
     target := rl.LoadRenderTexture(WIDTH, HEIGHT)
     defer rl.UnloadRenderTexture(target)
@@ -57,7 +56,7 @@ main :: proc() {
     for !rl.WindowShouldClose() {
 
         // pass data to shader
-        total_time := cast(f32) rl.GetTime()/5 + 1.5
+        total_time := cast(f32) rl.GetTime()
         delta_time := cast(f32) rl.GetFrameTime()
 
         rl.SetShaderValue(shader, shader_loc_time, &total_time, .FLOAT)
@@ -84,10 +83,14 @@ main :: proc() {
 
             rl.DrawText(fmt.ctprintf("%v fps", rl.GetFPS()), 0, 0, 10, rl.WHITE)
             rl.DrawText(fmt.ctprintf("min_dist %.6f", scene.camera.min_dist), 0, 13*1, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("t %v", total_time), 0, 13*2, 10, rl.WHITE)
-            rl.DrawText(fmt.ctprintf("dt %v", delta_time), 0, 13*3, 10, rl.WHITE)
+            rl.DrawText(fmt.ctprintf("time %v", total_time), 0, 13*2, 10, rl.WHITE)
+            rl.DrawText(fmt.ctprintf("frame time %v", delta_time), 0, 13*3, 10, rl.WHITE)
         }
         rl.EndDrawing()
+
+        scene.camera.pos.x = m.sin(total_time/4) * 3.5
+        scene.camera.pos.z = m.cos(total_time/4) * 3.5
+        scene.camera.rot.y = -total_time/4
 
         free_all(context.temp_allocator)
     }

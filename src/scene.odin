@@ -7,13 +7,13 @@ import "core:fmt"
 
 vec3 :: [3]f32
 
-raylab_scene :: struct {
-    camera  : ^raylab_camera,
-    objects : [dynamic]raylab_object,
-    params  : [dynamic]raylab_param,
+scene :: struct {
+    camera  : ^camera,
+    objects : [dynamic]object,
+    params  : [dynamic]param,
 }
 
-raylab_camera :: struct {
+camera :: struct {
     pos, rot  : vec3,
     max_march : int,          // max march count
     max_dist  : f32,          // max distance to stop marching at
@@ -21,20 +21,19 @@ raylab_camera :: struct {
     fov       : f32,          // horizontal field of veiw, in degrees
 }
 
-raylab_object :: struct {
+object :: struct {
     name : string,
-    SDF : string, // raw GLSL code - should NOT have a method header or ANYTHING of the sort
-    params : [dynamic]raylab_param,
+    SDF : string, // raw GLSL code - this should be the code inside the curly braces
+    params : [dynamic]param,
 }
 
-raylab_param :: struct {
+param :: struct {
     name : string,
-    type : raylab_param_type,
+    type : param_type,
     value : string,
-    dependencies: [dynamic]^raylab_param
 }
 
-raylab_param_type :: enum {
+param_type :: enum {
     t_bool,
     t_int,
     t_uint,
@@ -44,12 +43,12 @@ raylab_param_type :: enum {
     t_bvec3, t_ivec3, t_uvec3, t_vec3, t_dvec3,
     t_bvec4, t_ivec4, t_uvec4, t_vec4, t_dvec4,
 
-    // t_mat2x2, t_mat2x3, t_mat2x4, // maybe later
+    // t_mat2x2, t_mat2x3, t_mat2x4, /* maybe later */
     // t_mat3x2, t_mat3x3, t_mat3x4,
     // t_mat4x2, t_mat4x3, t_mat4x4,
 }
 
-raylab_param_type_str := [raylab_param_type]string {
+param_type_str := [param_type]string {
     .t_bool     = "bool",
     .t_int      = "int",
     .t_uint     = "uint",
