@@ -59,7 +59,7 @@ float scene_SDF(vec3 ray) {
         ico = d-0.2;
     }
 
-    const float repeat_scale = 1;
+    const float repeat_scale = 0.95;
     //ray = sin(ray/repeat_scale)*repeat_scale;
 
     float power = cos(raylab_total_time/7)+4;
@@ -134,18 +134,15 @@ void main() {
         iter += 1;
     }
 
-    vec3 range = mix(
-        vec3(58, 134, 255)/255.,
-        vec3(255, 0, 110)/255.,
-        float(iter)*6/float(raylab_cam_max_march)
-    );
+    float dist_from_camera = length(ray - raylab_cam_pos);
 
     vec3 col = mix(
-        vec3(0),
+        vec3(1),
         abs(normal(ray, raylab_cam_min_dist)),
-        float(iter)*6/float(raylab_cam_max_march)
+        float(iter)*4/float(raylab_cam_max_march)
     );
 
-    float cond = step(dist, raylab_cam_min_dist);
-    gl_FragColor = vec4(col, 1) * cond + vec4(vec3(0), 1) * (1-cond);
+    float hit_surface = step(dist, raylab_cam_min_dist);
+    vec3 surface_color = col * hit_surface + vec3(0) * (1 - hit_surface);
+    gl_FragColor = vec4(mix(surface_color, vec3(0), dist_from_camera*0.04), 1);
 }

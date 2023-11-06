@@ -20,10 +20,10 @@ main :: proc() {
 
     // init camera
     cam : camera
-    cam.pos, cam.rot = {0, 0, 3.5}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
+    cam.pos, cam.rot = {0, 0, 0}, {m.to_radians_f32(0),0,m.to_radians_f32(0)}
     cam.fov = m.to_radians_f32(65.0)
     cam.max_march = 500
-    cam.min_dist = 0.0003
+    cam.min_dist = 0.0005
     cam.max_dist = 7
 
     // init scene
@@ -88,9 +88,9 @@ main :: proc() {
         }
         rl.EndDrawing()
 
-        scene.camera.pos.x = m.sin(total_time/4) * 3.5
-        scene.camera.pos.z = m.cos(total_time/4) * 3.5
-        scene.camera.rot.y = -total_time/4
+        scene.camera.pos.x = m.sin(total_time/6) * 3.5
+        scene.camera.pos.z = m.cos(total_time/6) * 3.5
+        scene.camera.rot.y =      -total_time/6
 
         free_all(context.temp_allocator)
     }
